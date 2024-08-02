@@ -1,0 +1,9 @@
+---
+-hosts: ubuntu
+ become: true
+tasks:
+  -name: update dist
+   apt:
+     upgrade: dist
+     update_cache: yes
+  when: ansible_distribution == "Ubuntu"
