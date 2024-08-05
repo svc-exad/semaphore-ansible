@@ -10,6 +10,41 @@
       upgrade: dist
     when: ansible_distribution == "Ubuntu"
 
+  - name: allow ssh thru firewall
+    command: sudo ufw allow openssh
+    become: true
+
+  - name: Configure the kernel to keep connections alive when enabling the firewall
+    sysctl:
+      name: net.netfilter.nf_conntrack_tcp_be_liberal
+      value: 1
+      state: present
+      sysctl_set: yes
+      reload: yes
+
+  - name: Enable ufw
+    ufw: state=enabled
+
+  - name: copy csagent to all ubuntu hosts
+    copy:
+      src: crowdstrike-installer-debian-9_10_11.deb
+      dest: /home/itbdr/crowdstrike-installer-debian-9_10_11.deb
+      owner: itbdr
+      group: itbdr
+
+  - name: install csagent
+    command: apt install /home/itbdr/crowdstrike-installer-debian-9_10_11.deb
+    become: true
+    when: ansible_distribution == "Ubuntu"
+
+  - name: set csagent customer ID
+    command: sudo /opt/CrowdStrike/falconctl -s -f --cid=4F9398DCB63F43ED8D3FE99CB242AE1D-75
+    become: true
+
+  - name: start the csagent if just installed
+    command: systemctl start falcon-sensor
+    become: true
+
 - hosts: test
   become: true
   tasks:
@@ -23,13 +58,18 @@
       state: latest
     when: ansible_distribution == "Ubuntu"
 
-  - name: copy csagent to all ubuntu hosts
-    copy:
-      src: crowdstrike-installer-debian-9_10_11.deb
-      dest: /home/itbdr/crowdstrike-installer-debian-9_10_11.deb
-      owner: itbdr
-      group: itbdr
+- hosts: veeam_proxy
+  become: true
+  tasks:
 
+  -  name: set firewall ports for veeam proxy services
+     command: sudo ufw allow 443,902,2500:3300,49152:65535/tcp 
+     become: true
 
+- hosts: veeam_repos
+  become: true
+  tasks:
 
-
+  -  name: set firewall ports  for veeam repos
+     command: sudo ufw allow 443,2500:3300,6162/tcp
+     become: true
