@@ -23,5 +23,13 @@
       state: latest
     when: ansible_distribution == "Ubuntu"
 
+  - name: copy csagent to all ubuntu hosts
+    copy:
+      src: crowdstrike-installer-debian-9_10_11.deb
+      dest: /home/itbdr/crowdstrike-installer-debian-9_10_11.deb
+      owner: itbdr
+      group: itbdr
+
+
 
 
