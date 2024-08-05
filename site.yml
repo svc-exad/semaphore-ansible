@@ -1,11 +1,27 @@
 ---
-- hosts: ubuntu
+- hosts: all
   become: true
-  tasks:
+  pre_tasks:
 
-  - name: update repository (sudo apt update) and istall updates (sudo apt upgrade -y) on ubuntu
+  - name: install updates (Ubuntu)
+    tags: always
     apt:
       update_cache: yes
       upgrade: dist
     when: ansible_distribution == "Ubuntu"
+
+- hosts: test
+  become: true
+  tasks:
+
+  - name: install apache and php
+    tags: apache,apache2;ubuntu
+    apt:
+      name:
+        -  apache2
+        - libapache2-mod-php
+      state: latest
+    when: ansible_distribution == "Ubuntu"
+
+
 
