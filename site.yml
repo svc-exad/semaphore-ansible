@@ -10,6 +10,14 @@
       upgrade: dist
     when: ansible_distribution == "Ubuntu"
 
+  - name: install vmware tools on each ubuntu guest
+    apt:
+      name:
+        - open-vm-tools
+        - open-vm-tools-desktop
+      state: latest
+    when: ansible_distribution == "Ubuntu"
+
   - name: allow ssh thru firewall
     command: sudo ufw allow openssh
     become: true
