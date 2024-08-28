@@ -10,6 +10,13 @@
       upgrade: dist
     when: ansible_distribution == "Ubuntu"
 
+  - name: Update Debian-based Systems
+    tags: always
+    apt:
+      update_cache: yes
+      upgrade: dist
+    when: ansible_distribution == 'Debian'
+
   - name: install vmware tools on each ubuntu guest
     apt:
       name:
@@ -21,6 +28,7 @@
   - name: allow ssh thru firewall
     command: sudo ufw allow openssh
     become: true
+    when: ansible_distribution == "Ubuntu"
 
   - name: Configure the kernel to keep connections alive when enabling the firewall
     sysctl:
@@ -32,6 +40,7 @@
 
   - name: Enable ufw
     ufw: state=enabled
+    when: ansible_distribution == "Ubuntu"
 
   - name: copy csagent to all ubuntu hosts
     copy:
@@ -48,10 +57,12 @@
   - name: set csagent customer ID
     command: sudo /opt/CrowdStrike/falconctl -s -f --cid=4F9398DCB63F43ED8D3FE99CB242AE1D-75
     become: true
+    when: ansible_distribution == "Ubuntu"
 
   - name: start the csagent if just installed
     command: systemctl start falcon-sensor
     become: true
+    when: ansible_distribution == "Ubuntu"
 
 - hosts: test
   become: true
