@@ -3,6 +3,12 @@
   become: true
   pre_tasks:
 
+  - name: create patcher user
+    tags: always
+    user:
+      name: patcher
+      groups: root
+
   - name: install updates (Ubuntu)
     tags: always
     apt:
@@ -37,6 +43,7 @@
       state: present
       sysctl_set: yes
       reload: yes
+    when: ansible_distribution == "Ubuntu"
 
   - name: Enable ufw
     ufw: state=enabled
