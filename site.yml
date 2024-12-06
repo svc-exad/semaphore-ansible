@@ -71,6 +71,21 @@
     become: true
     when: ansible_distribution == "Ubuntu"
 
+  - name: install zabbix agent
+    command: sudo apt install zabbix-agent
+    become: true
+    when: ansible_distribution == "Ubuntu"
+
+  - name: start zabbix_agent
+    command: sudo systemctl enable zabbix-agent
+    become: true
+    when: ansible_distribution == "Ubuntu"
+
+  - name: set zabbix agent firewall port
+    command: sudo ufw allow 10050/tcp
+    become: true
+    when: ansible_distribution == "Ubuntu"
+
 - hosts: test
   become: true
   tasks:
