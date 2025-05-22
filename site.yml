@@ -71,13 +71,23 @@
     become: true
     when: ansible_distribution == "Ubuntu"
 
-  - name: install zabbix agent
-    command: sudo apt install zabbix-agent
+  - name: download zabbix agent
+    command: wget https://repo.zabbix.com/zabbix/7.2/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest_7.2+ubuntu24.04_all.deb
     become: true
     when: ansible_distribution == "Ubuntu"
 
+  - name: install zabbix repo
+    command: sudo sudo dpkg -i zabbix-release_latest_7.2+ubuntu24.04_all.deb
+    become: true
+    when: ansible_distribution == "Ubuntu"
+
+#  - name: install zabbix agent
+#    command: sudo apt install zabbix-agent2
+#    become: true
+#    when: ansible_distribution == "Ubuntu"
+
   - name: start zabbix_agent
-    command: sudo systemctl enable zabbix-agent
+    command: sudo systemctl enable zabbix-agent2
     become: true
     when: ansible_distribution == "Ubuntu"
 
